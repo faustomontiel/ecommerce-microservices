@@ -4,34 +4,54 @@ import { marshall, unmarshall } from "@aws-sdk/util-dynamodb";
 import { ddbClient } from "./ddbClient";
 import { v4 as uuidv4 } from "uuid"
 
-exports.handler = async function (event) {
+export const handler = async (event) => {
     console.log("request:", JSON.stringify(event, undefined, 2));
-
-    switch (event.httpMethod) {
+    let body;
+    try {
+      switch (event.httpMethod) {
         case "GET":
-            if (event.pathParameters != null) {
-                body = await getProduct(event.pathParameters.id); // GET product/1
-            } else {
-                body = await getAllProducts(); // GET product
-            }
-        case "GET":
-            body = await createProduct(event); // POST product
-            break;
+          if(event.queryStringParameters != null) {
+            body = await getProductsByCategory(event); // GET product/1234?category=Phone
+          }
+          else if (event.pathParameters != null) {
+            body = await getProduct(event.pathParameters.id); // GET product/{id}
+          } else {
+            body = await getAllProducts(); // GET product
+          }
+          break;
+        case "POST":
+          body = await createProduct(event); // POST /product
+          break;
         case "DELETE":
-            body = await deleteProduct(event.pathParameters.id); // DELETE product/1
-            break;
+          body = await deleteProduct(event.pathParameters.id); // DELETE /product/{id}
+          break;
+        case "PUT":
+            body = await updateProduct(event); // PUT /product/{id}
+          break;
         default:
-            throw new Error(`Unsupported route: "${event.httpMethod}"`);
-    }
+          throw new Error(`Unsupported route: "${event.httpMethod}"`);
+      }
 
-
-    return {
+      console.log(body);
+      return {
         statusCode: 200,
-        headers: { "Content-Type": "text/plain" },
-        body: `Hello from Product ! You've hit ${event.path}\n`
-    };
+        body: JSON.stringify({
+          message: `Successfully finished operation: "${event.httpMethod}"`,
+          body: body
+        })
+      };
 
-    
+    } catch (e) {
+      console.error(e);
+      return {
+        statusCode: 500,
+        body: JSON.stringify({
+          message: "Failed to perform operation.",
+          errorMsg: e.message,
+          errorStack: e.stack,
+        })
+      };
+    }
 };
 
 const getProduct = async (productId) => {
@@ -84,7 +104,7 @@ const createProduct = async (event) => {
 
         const params = {
             TableName: process.env.DYNAMODB_TABLE_NAME,
-            Items: marshall(productRequest || {})
+            Item: marshall(productRequest || {})
         };
 
         const createResult = await ddbClient.send(new PutItemCommand(params));
@@ -118,3 +138,63 @@ const deleteProduct = async (productId) => {
         throw e;
     }
 }
+
+const updateProduct = async (event) => {
+    console.log(`updateProduct function. event: "${event}"`);
+
+    try {
+        const requestBody = JSON.parse(event.body);
+        const objKeys = Object.keys(requestBody);
+
+        console.log(`updateProduct function. requestBody : "${requestBody}", objsKeys: "${objKeys}"`);
+
+        const params = {
+            TableName: process.env.DYNAMODB_TABLE_NAME,
+            Key: marshall({ id: event.pathParameters.id }),
+            UpdateExpression: `SET ${objKeys.map((_, index) => `#key${index} = :value${index}`).join(", ")}`,
+            ExpressionAttributeNames: objKeys.reduce((acc, key, index) => ({
+                ...acc,
+                [`#key${index}`]: key,
+            }), {}),
+            ExpressionAttributeValues: marshall(objKeys.reduce((acc, key, index) => ({
+                ...acc,
+                [`:value${index}`]: requestBody[key],
+            }), {})),
+        };
+
+        const updateResult = await ddbClient.send(new UpdateItemCommand(params));
+
+        console.log(updateResult);
+        return updateResult;
+    } catch (e) {
+        console.error(e);
+        throw e;
+    }
+};
+
+const getProductsByCategory = async (event) => {
+    console.log("getProductsByCategory");
+    try {
+        // GET product/1234?category=Phone
+        const productId = event.pathParameters.id;
+        const category = event.queryStringParameters.category;
+
+        const params = {
+            KeyConditionExpression: "id = :productId",
+            FilterExpression: "contains (category, :category)",
+            ExpressionAttributeValues: {
+                ":productId": { S: productId },
+                ":category": { S: category }
+            },
+            TableName: process.env.DYNAMODB_TABLE_NAME
+        };
+
+        const { Items } = await ddbClient.send(new QueryCommand(params));
+
+        console.log(Items);
+        return Items.map((item) => unmarshall(item));
+    } catch (e) {
+        console.error(e);
+        throw e;
+    }
+};
