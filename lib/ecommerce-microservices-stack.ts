@@ -2,6 +2,7 @@ import * as cdk from 'aws-cdk-lib';
 import { Construct } from 'constructs';
 import { EcomApiGateway } from './apigateway';
 import { EcomDatabase } from './database';
+import { EcomEventBus } from './eventbus';
 import { EcomMicroservices } from './microservices';
 
 export class EcommerceMicroservicesStack extends cdk.Stack {
@@ -12,12 +13,19 @@ export class EcommerceMicroservicesStack extends cdk.Stack {
 
     const microservices = new EcomMicroservices(this, 'Microservices', {
       productTable: database.productTable,
-      basketTable: database.basketTable
+      basketTable: database.basketTable,
+      orderTable: database.orderTable
     });
 
     const apigateway = new EcomApiGateway(this,'ApiGateway',{
       productMicroservice: microservices.productMicroservice,
-      basketMicroservice: microservices.basketMicroservice
+      basketMicroservice: microservices.basketMicroservice,
+      orderMicroservice: microservices.orderingMicroservice,
+    });
+
+    const eventbus = new EcomEventBus(this, 'EventBus', {
+      publisherFuntion: microservices.basketMicroservice,
+      targetFuntion: microservices.orderingMicroservice
     });
 
   }

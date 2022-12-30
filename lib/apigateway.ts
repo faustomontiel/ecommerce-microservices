@@ -5,6 +5,7 @@ import { Construct } from "constructs";
 interface EcomApiGatewayProps {
     productMicroservice: IFunction
     basketMicroservice: IFunction
+    orderMicroservice: IFunction
 }
 
 export class EcomApiGateway extends Construct {
@@ -15,10 +16,13 @@ export class EcomApiGateway extends Construct {
         // Product api gateway
         this.createProductApi(props.productMicroservice);
         //Basket api gateway
-        this.createBasketApi (props.basketMicroservice);
+        this.createBasketApi(props.basketMicroservice);
+        //Ordering api gateway
+        this.createOrderApi(props.orderMicroservice);
+
     }
 
-    private createProductApi(productMicroservice:IFunction){
+    private createProductApi(productMicroservice: IFunction) {
         const apigw = new LambdaRestApi(this, 'productApi', {
             restApiName: 'Product Service',
             handler: productMicroservice,
@@ -35,7 +39,7 @@ export class EcomApiGateway extends Construct {
         singleProduct.addMethod('DELETE'); // DELETE /product/{id}
     }
 
-    private createBasketApi(basketMicroservice:IFunction){
+    private createBasketApi(basketMicroservice: IFunction) {
         const apigw = new LambdaRestApi(this, 'basketApi', {
             restApiName: 'Basket Service',
             handler: basketMicroservice,
@@ -54,5 +58,31 @@ export class EcomApiGateway extends Construct {
         basketcheckout.addMethod('POST'); // POST /basket/checkout
         //expected request payload: { userName: fausto}
 
+    }
+
+    private createOrderApi(orderingMicroservices: IFunction) {
+        // Ordering microservices api gateway
+        // root name = order
+
+        // GET /order
+	    // GET /order/{userName}
+        // expected request : xxx/order/swn?orderDate=timestamp
+        // ordering ms grap input and query parameters and filter to dynamo db
+
+        const apigw = new LambdaRestApi(this, 'orderApi', {
+            restApiName: 'Order Service',
+            handler: orderingMicroservices,
+            proxy: false
+        });
+    
+        const order = apigw.root.addResource('order');
+        order.addMethod('GET');  // GET /order        
+    
+        const singleOrder = order.addResource('{userName}');
+        singleOrder.addMethod('GET');  // GET /order/{userName}
+            // expected request : xxx/order/swn?orderDate=timestamp
+            // ordering ms grap input and query parameters and filter to dynamo db
+    
+        return singleOrder;
     }
 }
