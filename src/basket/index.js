@@ -219,3 +219,4 @@ const checkoutBasket = async (event) => {
         console.error(e);
         throw e;
     }
+}
