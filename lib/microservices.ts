@@ -4,8 +4,6 @@ import { NodejsFunction, NodejsFunctionProps } from "aws-cdk-lib/aws-lambda-node
 import { Construct } from "constructs";
 import { join } from "path";
 
-
-
 interface EcomMicroservicesProps{
     productTable: ITable;
     basketTable: ITable;
