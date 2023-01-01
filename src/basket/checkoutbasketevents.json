@@ -1,22 +1,22 @@
 [
     {
-      "Source": "com.swn.basket.checkoutbasket",
-      "Detail": "{ \"username\": \"swn\", \"basket\": \"phone1\" }",
+      "Source": "com.ecom.basket.checkoutbasket",
+      "Detail": "{ \"username\": \"ecom\", \"basket\": \"phone1\" }",
       "Resources": [
         "resource1",
         "resource2"
       ],
       "DetailType": "CheckoutBasket",
-      "EventBusName": "SwnEventBus"
+      "EventBusName": "EcomEventBus"
     },
     {
-      "Source": "com.swn.basket.checkoutbasket",
-      "Detail": "{ \"username\": \"swn\", \"basket\": \"phone2\" }",
+      "Source": "com.ecom.basket.checkoutbasket",
+      "Detail": "{ \"username\": \"ecom\", \"basket\": \"phone2\" }",
       "Resources": [
         "resource1",
         "resource2"
       ],
       "DetailType": "CheckoutBasket",
-      "EventBusName": "SwnEventBus"
+      "EventBusName": "EcomEventBus"
     }
 ]

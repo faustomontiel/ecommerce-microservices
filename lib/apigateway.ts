@@ -66,7 +66,7 @@ export class EcomApiGateway extends Construct {
 
         // GET /order
 	    // GET /order/{userName}
-        // expected request : xxx/order/swn?orderDate=timestamp
+        // expected request : xxx/order/fausto?orderDate=timestamp
         // ordering ms grap input and query parameters and filter to dynamo db
 
         const apigw = new LambdaRestApi(this, 'orderApi', {
@@ -80,7 +80,7 @@ export class EcomApiGateway extends Construct {
     
         const singleOrder = order.addResource('{userName}');
         singleOrder.addMethod('GET');  // GET /order/{userName}
-            // expected request : xxx/order/swn?orderDate=timestamp
+            // expected request : xxx/order/fausto?orderDate=timestamp
             // ordering ms grap input and query parameters and filter to dynamo db
     
         return singleOrder;

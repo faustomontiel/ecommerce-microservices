@@ -1,4 +1,5 @@
 import { GetItemCommand, ScanCommand, PutItemCommand, DeleteItemCommand } from "@aws-sdk/client-dynamodb"
+import { PutEventsCommand } from "@aws-sdk/client-eventbridge";
 import { marshall, unmarshall } from "@aws-sdk/util-dynamodb";
 import { ddbClient } from "./ddbClient";
 
@@ -146,7 +147,7 @@ const deleteBasket = async (userName) => {
 const checkoutBasket = async (event) => {
     console.log("checkoutBasket");
   
-    // expected request payload : { userName : swn, attributes[firstName, lastName, email ..] 
+    // expected request payload : { userName : fausto, attributes[firstName, lastName, email ..] 
     const checkoutRequest = JSON.parse(event.body);
     if (checkoutRequest == null || checkoutRequest.userName == null) {
       throw new Error(`userName should exist in checkoutRequest: "${checkoutRequest}"`);

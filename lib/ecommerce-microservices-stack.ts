@@ -3,7 +3,7 @@ import { Construct } from 'constructs';
 import { EcomApiGateway } from './apigateway';
 import { EcomDatabase } from './database';
 import { EcomEventBus } from './eventbus';
-import { EcomMicroservices } from './microservices';
+import { EcomMicroservices } from './microservice';
 
 export class EcommerceMicroservicesStack extends cdk.Stack {
   constructor(scope: Construct, id: string, props?: cdk.StackProps) {
