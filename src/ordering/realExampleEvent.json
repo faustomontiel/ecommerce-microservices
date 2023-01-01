@@ -1,0 +1,36 @@
+{
+    "version": "0",
+    "id": "462ce97b-5580-3583-1c42-033f2b5c2b48",
+    "detail-type": "CheckoutBasket",
+    "source": "com.ecom.basket.checkoutbasket",
+    "account": "account-number",
+    "time": "2023-01-01T09:04:55Z",
+    "region": "sa-east-1",
+    "resources": [],
+    "detail": {
+        "userName": "fausto",
+        "totalPrice": 1820,
+        "firstName": "fausto",
+        "lastName": "montiel",
+        "email": "faustomontiel98@gmail.com",
+        "address": "bsas",
+        "cardInfo": "5554443322",
+        "paymentMethod": 1,
+        "items": [
+            {
+                "quantity": 2,
+                "color": "Red",
+                "productId": "2266628b-ff81-4a9f-a82d-8c46766aa122",
+                "price": 950,
+                "productName": "IPhone X"
+            },
+            {
+                "quantity": 1,
+                "color": "Blue",
+                "productId": "c4f49ceb-b1d4-4b2b-bbae-31f4e024b9d5",
+                "price": 870,
+                "productName": "Samsung 10"
+            }
+        ]
+    }
+}

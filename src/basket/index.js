@@ -2,6 +2,7 @@ import { GetItemCommand, ScanCommand, PutItemCommand, DeleteItemCommand } from "
 import { PutEventsCommand } from "@aws-sdk/client-eventbridge";
 import { marshall, unmarshall } from "@aws-sdk/util-dynamodb";
 import { ddbClient } from "./ddbClient";
+import { ebClient } from "./eventBridgeClient";
 
 export const handler = async (event) => {
     console.log("request:", JSON.stringify(event, undefined, 2));
