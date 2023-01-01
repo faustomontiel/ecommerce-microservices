@@ -4,6 +4,7 @@ import { EcomApiGateway } from './apigateway';
 import { EcomDatabase } from './database';
 import { EcomEventBus } from './eventbus';
 import { EcomMicroservices } from './microservice';
+import { EcomQueue } from './queue';
 
 export class EcommerceMicroservicesStack extends cdk.Stack {
   constructor(scope: Construct, id: string, props?: cdk.StackProps) {
@@ -23,10 +24,13 @@ export class EcommerceMicroservicesStack extends cdk.Stack {
       orderMicroservice: microservices.orderingMicroservice,
     });
 
-    const eventbus = new EcomEventBus(this, 'EventBus', {
-      publisherFuntion: microservices.basketMicroservice,
-      targetFuntion: microservices.orderingMicroservice
+    const queue = new EcomQueue(this, 'Queue', {
+      consumer: microservices.orderingMicroservice
     });
 
+    const eventbus = new EcomEventBus(this, 'EventBus', {
+      publisherFuntion: microservices.basketMicroservice,
+      targetQueue: queue.orderQueue   
+    });   
   }
 }
