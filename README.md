@@ -7,6 +7,7 @@
 * AWS API Gateway
 * AWS Lambda
 * NodeJs
+* Typescript
 * AWS DynamoDB
 * AWS EventBridge
 * AWS SQS
@@ -14,5 +15,3 @@
 * Docker
 * AWS SDK
 * AWS CloudWatch
-
-
